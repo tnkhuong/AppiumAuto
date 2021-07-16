@@ -5,25 +5,29 @@ import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class BaseClass extends AppiumServer{
 
-    public static AppiumDriver<MobileElement> capabilities() throws MalformedURLException {
+    public static AppiumDriver<MobileElement> capabilities(String appName) throws MalformedURLException {
 
         AppiumDriver<MobileElement> driver;
 
         //File app = new File("sourceapp/ApiDemos-debug.apk");
-        File app = new File("sourceapp/as24-alpha-v4.4.2.apk");
+        File app = new File("sourceapp/"+ getAppName(appName));
 
         DesiredCapabilities cap = new DesiredCapabilities();
+
         cap.setCapability(MobileCapabilityType.DEVICE_NAME, "AutoTest");
-        cap.setCapability(MobileCapabilityType.UDID, "emulator-5554");
+        //cap.setCapability(MobileCapabilityType.UDID, "emulator-5554");
 
         //cap.setCapability(MobileCapabilityType.DEVICE_NAME, "Nexus 8");
-        //cap.setCapability(MobileCapabilityType.UDID, "05f0b23c");
+        cap.setCapability(MobileCapabilityType.UDID, "05f0b23c");
 
         cap.setCapability("platformName", "Android");
         cap.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
@@ -36,5 +40,19 @@ public class BaseClass extends AppiumServer{
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 
         return driver;
+    }
+
+    public static String getAppName(String appKey){
+        try
+        {
+            String userDir = System.getProperty("user.dir");
+            FileInputStream app = new FileInputStream(userDir + "/src/main/java/global.properties");
+            Properties pros = new Properties();
+            pros.load(app);
+            return (String) pros.get(appKey);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 }

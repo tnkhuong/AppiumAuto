@@ -1,5 +1,6 @@
 package appiumServer;
 
+import io.appium.java_client.service.local.AppiumDriverLocalService;
 import org.openqa.selenium.net.UrlChecker;
 
 import java.io.IOException;
@@ -9,36 +10,18 @@ import java.util.concurrent.TimeUnit;
 
 public class AppiumServer {
 
+    private AppiumDriverLocalService service = AppiumDriverLocalService.buildDefaultService();;
+
     public void startAppiumServer(){
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            runtime.exec("cmd.exe /c start cmd.exe /k \"appium -a 127.0.0.1 -p 4723\"");
-            Thread.sleep(8000);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void startAppiumServer(String http, String port){
-
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            runtime.exec("cmd.exe /c start cmd.exe /k \"appium -a" + http + " -p "+ port +"\"");
-            Thread.sleep(8000);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+        if (!service.isRunning())
+        {
+            service.start();
         }
     }
 
     public void stopAppiumServer(){
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            runtime.exec("taskkill /F /IM node.exe");
-            runtime.exec("taskkill /F /IM cmd.exe");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        service.stop();
     }
 
     private boolean waitUntilIsRunning() throws MalformedURLException {
